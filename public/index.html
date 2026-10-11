@@ -1,9 +1,9 @@
 <!doctype html>
 <html lang="en">
-
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <!-- <meta name="viewport" content="width=device-width,initial-scale=1"> -->
+   <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
   <title>private_chat</title>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
@@ -12,6 +12,7 @@
     }
 
     body {
+      /* overflow: hidden; */
       margin: 0;
       background: #0a0a0a;
       color: #ddd;
@@ -338,6 +339,11 @@
 }
 
 
+/* Stop the whole page from scrolling when the keyboard opens */
+html,
+body {
+  overflow: hidden;
+}
 
   </style>
 </head>
@@ -409,6 +415,8 @@ but hey, I’m happy we’re here, umm yeah,
   </div>
 
   <script>
+
+
 
     setTimeout(() => $('hello')?.remove(), 60000);
     const $ = s => document.getElementById(s);
@@ -543,7 +551,17 @@ but hey, I’m happy we’re here, umm yeah,
     }
 
 
- 
+ // Keep chat and input visible together when the phone keyboard opens
+if (window.visualViewport) {
+  const fit = () => {
+    document.body.style.height = window.visualViewport.height + 'px';
+    window.scrollTo(0, 0);
+    const box = $('msgs');
+    box.scrollTop = box.scrollHeight;
+  };
+  window.visualViewport.addEventListener('resize', fit);
+  window.visualViewport.addEventListener('scroll', () => window.scrollTo(0, 0));
+}
 
   </script>
 
