@@ -521,6 +521,7 @@ but hey, I’m happy we’re here, umm yeah,
       $('t').value = '';
       $('send').classList.remove('on');
       api('/api/rooms/' + rid + '/messages', { name: me, text });
+      $('t').focus();
     };
 
     $('t').oninput = () => $('send').classList.toggle('on', !!$('t').value.trim());
