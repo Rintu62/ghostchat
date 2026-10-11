@@ -14,7 +14,7 @@ http.createServer((req,res)=>{
   const body=cb=>{let b='';req.on('data',d=>{b+=d;if(b.length>5000)req.destroy()});
     req.on('end',()=>{try{cb(JSON.parse(b||'{}'))}catch{json(400,{})}})};
   // NEW: serve the picture used in the greeting popup
-  if(p[0]==='pic.jpg'){res.writeHead(200,{'Content-Type':'image/jpeg'});return fs.createReadStream(__dirname+'/public/pic.jpg').on('error',()=>res.end()).pipe(res)}
+  if(p[0]==='pic.jpg'){res.writeHead(200,{'Content-Type':'image/jpg'});return fs.createReadStream(__dirname+'/public/pic.jpg').on('error',()=>res.end()).pipe(res)}
   if(p[0]!=='api'){res.writeHead(200,{'Content-Type':'text/html'});return res.end(page)}
   if(req.method==='POST'&&p.length===2){
     if(rooms.size>=5000) return json(503,{});
