@@ -289,6 +289,48 @@
         font-size: 16px;
       }
     }
+
+
+
+        /* Greeting popup */
+#hello {
+  position: relative;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto 22px;
+  padding: 10px 34px;
+  background: #0f1f14;
+  border: 1px solid #1d5c33;
+  color: #7ee2a0;
+  text-align: center;
+  animation: pop 0.5s ease;
+}
+
+#hello button {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  background: transparent;
+  color: #5a8f6c;
+  font-size: 14px;
+}
+
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+   
+
+
+
+
+
   </style>
 </head>
 
@@ -301,6 +343,20 @@
         <b id="bt">ROOM DESTROYED</b>
         <span>All messages were permanently deleted.</span>
       </div>
+
+
+
+      <div id="hello">
+
+  <span style="color: #FF8FAB;">Blushing already!𐙚</span> <br>
+  umm…  <span style="color: red;">Mr </span>   <span style="color: yellow;">♡</span> U<br>
+  a little nervous, a little excited…
+but hey, I’m happy we’re here, umm yeah,
+   idk why, but texting you feels kinda special <span style="color: rgb(255, 0, 0);">♨︎_♨︎</span>
+  <button onclick="this.parentElement.remove()">✕</button>
+</div>
+
+
       <h1>&gt;private_chat</h1>
       <p class="sub">A private, self-destructing chat room.</p>
       <div class="card">
@@ -345,6 +401,8 @@
   </div>
 
   <script>
+
+    setTimeout(() => $('hello')?.remove(), 60000);
     const $ = s => document.getElementById(s);
 
     // Random anonymous identity
@@ -474,6 +532,10 @@
       $('go').textContent = 'CREATE SECURE ROOM';
       $('err').textContent = '';
     }
+
+
+ 
+
   </script>
 
 </body>
