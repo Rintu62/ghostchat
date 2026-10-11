@@ -1,0 +1,1 @@
+{"name":"ghostchat","version":"1.0.0","description":"Self-destructing real-time chat rooms","scripts":{"start":"node server.js"},"engines":{"node":">=18"}}
