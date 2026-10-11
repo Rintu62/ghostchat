@@ -1,10 +1,11 @@
 const http=require('http'),fs=require('fs'),crypto=require('crypto');
 const TTL=(+process.env.ROOM_TTL_MIN||10)*60000, PORT=process.env.PORT||3000;
 const page=fs.readFileSync(__dirname+'/public/index.html');
+const types={'.jpg':'image/jpeg','.jpeg':'image/jpeg','.png':'image/png','.webp':'image/webp','.gif':'image/gif'};
 const rooms=new Map();
 const sse=(r,ev,d)=>r.clients.forEach(c=>c.write(`event: ${ev}\ndata: ${JSON.stringify(d)}\n\n`));
 function destroy(id,reason){
-  const r=rooms.get(id); if(!r) return;
+  const r=rooms.get(id); if(!r) return; 
   clearTimeout(r.timer); sse(r,'destroyed',{reason});
   const cs=[...r.clients]; r.clients.clear(); rooms.delete(id); cs.forEach(c=>c.end());
 }
@@ -13,19 +14,13 @@ http.createServer((req,res)=>{
   const json=(c,o)=>{res.writeHead(c,{'Content-Type':'application/json'});res.end(JSON.stringify(o))};
   const body=cb=>{let b='';req.on('data',d=>{b+=d;if(b.length>5000)req.destroy()});
     req.on('end',()=>{try{cb(JSON.parse(b||'{}'))}catch{json(400,{})}})};
-  // NEW: serve the picture used in the greeting popup
 
-    // Serve images from the public folder (popup picture)
-    
+  // Serve images from the public folder (popup picture)
   const ext=(p[0]||'').match(/^[\w-]+(\.(?:jpg|jpeg|png|webp|gif))$/i);
   if(ext){
     res.writeHead(200,{'Content-Type':types[ext[1].toLowerCase()]});
     return fs.createReadStream(__dirname+'/public/'+p[0]).on('error',()=>res.end()).pipe(res);
   }
-
-//   const ext=(p[0]||'').match(/^[\w-]+(\.(?:jpg|jpeg|png|webp|gif))$/i);
-// if(ext){res.writeHead(200,{'Content-Type':types[ext[1].toLowerCase()]});return fs.createReadStream(__dirname+'/public/'+p[0]).on('error',()=>res.end()).pipe(res)}
-  // if(p[0]==='pic.jpg'){res.writeHead(200,{'Content-Type':'image/jpeg'});return fs.createReadStream(__dirname+'/public/pic.jpg').on('error',()=>res.end()).pipe(res)}
 
   if(p[0]!=='api'){res.writeHead(200,{'Content-Type':'text/html'});return res.end(page)}
   if(req.method==='POST'&&p.length===2){
