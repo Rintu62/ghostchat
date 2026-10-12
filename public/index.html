@@ -355,7 +355,8 @@ body {
     <div class="wrap">
       <div id="banner" class="hide">
         <b id="bt">ROOM DESTROYED</b>
-        <span>All messages were permanently deleted.</span>
+        <!-- <span>All messages were permanently deleted.</span> -->
+        <span id="bm">All messages were permanently deleted.</span>
       </div>
 
 
@@ -464,6 +465,7 @@ but hey, I’m happy we’re here, umm yeah,
 
       es.addEventListener('init', e => {
         const d = JSON.parse(e.data);
+        $('banner').classList.add('hide');
         $('home').classList.add('hide');
         $('room').classList.remove('hide');
         $('rid').textContent = rid.slice(0, 10) + '...';
@@ -538,18 +540,27 @@ but hey, I’m happy we’re here, umm yeah,
     };
 
     // Room ended: back to home screen with a banner
-    function gone(r) {
-      es.close();
-      clearInterval(tick);
-      $('room').classList.add('hide');
-      $('home').classList.remove('hide');
-      $('bt').textContent = r === 'expired' ? 'ROOM EXPIRED' : 'ROOM DESTROYED';
-      $('banner').classList.remove('hide');
-      rid = null;
-      history.pushState(0, '', '/');
-      $('go').textContent = 'CREATE SECURE ROOM';
-      $('err').textContent = '';
-    }
+  function gone(r) {
+  es.close();
+  clearInterval(tick);
+  $('room').classList.add('hide');
+  $('home').classList.remove('hide');
+  $('banner').classList.remove('hide');
+  $('err').textContent = '';
+
+  if (r === 'expired') {
+    // keep the room link; joining again starts a fresh chat
+    $('bt').textContent = 'ROOM EXPIRED';
+    $('bm').textContent = 'All messages were deleted. Click JOIN ROOM to start a new chat.';
+    $('go').textContent = 'JOIN ROOM';
+  } else {
+    $('bt').textContent = 'ROOM DESTROYED';
+    $('bm').textContent = 'All messages were permanently deleted.';
+    rid = null;
+    history.pushState(0, '', '/');
+    $('go').textContent = 'CREATE SECURE ROOM';
+  }
+}
 
 
  // Keep chat and input visible together when the phone keyboard opens
