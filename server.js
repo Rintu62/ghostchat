@@ -1,5 +1,5 @@
 const http=require('http'),fs=require('fs'),crypto=require('crypto');
-const TTL=(+process.env.ROOM_TTL_MIN||11)*60000, PORT=process.env.PORT||3000;
+const TTL=(+process.env.ROOM_TTL_MIN||1440)*60000, PORT=process.env.PORT||3000;
 const KEEP=24*60*60*1000; // an expired room's link stays reusable for 24 hours
 const page=fs.readFileSync(__dirname+'/public/index.html');
 const types={'.jpg':'image/jpeg','.jpeg':'image/jpeg','.png':'image/png','.webp':'image/webp','.gif':'image/gif'};
