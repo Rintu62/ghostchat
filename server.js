@@ -1,8 +1,8 @@
 const http=require('http'),fs=require('fs'),crypto=require('crypto');
-const TTL=(+process.env.ROOM_TTL_MIN||1440)*60000, PORT=process.env.PORT||3000;
+const TTL=(+process.env.ROOM_TTL_MIN||60)*60000, PORT=process.env.PORT||3000;
 const KEEP=24*60*60*1000; // an expired room's link stays reusable for 24 hours
 const page=fs.readFileSync(__dirname+'/public/index.html');
-const types={'.jpg':'image/jpeg','.jpeg':'image/jpeg','.png':'image/png','.webp':'image/webp','.gif':'image/gif'};
+const types={'.jpg':'image/jpeg','.jpeg':'image/jpeg','.png':'image/png','.webp':'image/webp','.gif':'image/gif','.mp3':'audio/mpeg'};
 const rooms=new Map();
 const sse=(r,ev,d)=>r.clients.forEach(c=>c.write(`event: ${ev}\ndata: ${JSON.stringify(d)}\n\n`));
 
@@ -13,7 +13,7 @@ function start(id,r){
   r.timer=setTimeout(()=>expire(id),TTL);
 }
 
-// Timer ended: wipe the chat but keep the room link alive
+// Timer ended (or Destroy Now): wipe the chat but keep the room link alive
 function expire(id){
   const r=rooms.get(id); if(!r) return;
   sse(r,'destroyed',{reason:'expired'});
@@ -22,24 +22,32 @@ function expire(id){
   cs.forEach(c=>c.end());
 }
 
-// Destroy Now: delete the room completely (link stops working)
-function destroy(id){
-  const r=rooms.get(id); if(!r) return;
-  clearTimeout(r.timer); clearTimeout(r.idle); sse(r,'destroyed',{reason:'destroyed'});
-  const cs=[...r.clients]; r.clients.clear(); rooms.delete(id); cs.forEach(c=>c.end());
-}
-
 http.createServer((req,res)=>{
   const p=new URL(req.url,'http://x').pathname.split('/').filter(Boolean);
   const json=(c,o)=>{res.writeHead(c,{'Content-Type':'application/json'});res.end(JSON.stringify(o))};
   const body=cb=>{let b='';req.on('data',d=>{b+=d;if(b.length>5000)req.destroy()});
     req.on('end',()=>{try{cb(JSON.parse(b||'{}'))}catch{json(400,{})}})};
 
-  // Serve images from the public folder (popup picture)
-  const ext=(p[0]||'').match(/^[\w-]+(\.(?:jpg|jpeg|png|webp|gif))$/i);
+  // Serve images and music from the public folder
+  const ext=(p[0]||'').match(/^[\w-]+(\.(?:jpg|jpeg|png|webp|gif|mp3))$/i);
   if(ext){
-    res.writeHead(200,{'Content-Type':types[ext[1].toLowerCase()]});
-    return fs.createReadStream(__dirname+'/public/'+p[0]).on('error',()=>res.end()).pipe(res);
+    const file=__dirname+'/public/'+p[0], type=types[ext[1].toLowerCase()];
+    fs.stat(file,(err,st)=>{
+      if(err){res.writeHead(404);return res.end()}
+      const h={'Content-Type':type,'Accept-Ranges':'bytes','Cache-Control':'public, max-age=86400'};
+      const m=(req.headers.range||'').match(/bytes=(\d*)-(\d*)/);
+      if(m){
+        let s=m[1]?+m[1]:0, e=m[2]?+m[2]:st.size-1;
+        if(!m[1]&&m[2]){s=Math.max(0,st.size-(+m[2]));e=st.size-1}
+        e=Math.min(e,st.size-1);
+        if(s>e||s>=st.size){res.writeHead(416,{'Content-Range':'bytes */'+st.size});return res.end()}
+        res.writeHead(206,{...h,'Content-Range':`bytes ${s}-${e}/${st.size}`,'Content-Length':e-s+1});
+        return fs.createReadStream(file,{start:s,end:e}).pipe(res);
+      }
+      res.writeHead(200,{...h,'Content-Length':st.size});
+      fs.createReadStream(file).pipe(res);
+    });
+    return;
   }
 
   if(p[0]!=='api'){res.writeHead(200,{'Content-Type':'text/html'});return res.end(page)}

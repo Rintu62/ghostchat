@@ -1,9 +1,9 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
-  <!-- <meta name="viewport" content="width=device-width,initial-scale=1"> -->
-   <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
+  <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
   <title>private_chat</title>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
@@ -11,8 +11,12 @@
       box-sizing: border-box;
     }
 
+    html,
     body {
-      /* overflow: hidden; */
+      overflow: hidden;
+    }
+
+    body {
       margin: 0;
       background: #0a0a0a;
       color: #ddd;
@@ -117,6 +121,51 @@
       color: #777;
     }
 
+    /* Greeting popup */
+    #hello {
+      position: relative;
+      width: fit-content;
+      max-width: 100%;
+      margin: 0 auto 22px;
+      padding: 10px 34px;
+      background: #0f1f14;
+      border: 1px solid #1d5c33;
+      color: #7ee2a0;
+      text-align: center;
+      animation: pop 0.5s ease;
+    }
+
+    #hello button {
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      background: transparent;
+      color: #5a8f6c;
+      font-size: 14px;
+    }
+
+    @keyframes pop {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Small picture in greeting popup */
+    #hello .mini {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+      vertical-align: middle;
+      margin-left: 3px;
+    }
+
     /* ---------- Room screen ---------- */
     #room {
       height: 100%;
@@ -179,6 +228,24 @@
       padding: 7px 12px;
       font-size: 11px;
       font-weight: 700;
+    }
+
+    /* Music player */
+    #player button {
+      background: #222;
+      color: #aaa;
+      padding: 4px 9px;
+      font-size: 12px;
+      margin-right: 4px;
+    }
+
+    #player button:hover {
+      color: #fff;
+    }
+
+    #pp.on {
+      background: #00c853;
+      color: #000;
     }
 
     /* ---------- Messages ---------- */
@@ -290,61 +357,6 @@
         font-size: 16px;
       }
     }
-
-
-
-        /* Greeting popup */
-#hello {
-  position: relative;
-  width: fit-content;
-  max-width: 100%;
-  margin: 0 auto 22px;
-  padding: 10px 34px;
-  background: #0f1f14;
-  border: 1px solid #1d5c33;
-  color: #7ee2a0;
-  text-align: center;
-  animation: pop 0.5s ease;
-}
-
-#hello button {
-  position: absolute;
-  top: 6px;
-  right: 8px;
-  background: transparent;
-  color: #5a8f6c;
-  font-size: 14px;
-}
-
-@keyframes pop {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-   
-
-/* Small picture in greeting popup */
-#hello .mini {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  object-fit: cover;
-  vertical-align: middle;
-  margin-left: 3px;
-}
-
-
-/* Stop the whole page from scrolling when the keyboard opens */
-html,
-body {
-  overflow: hidden;
-}
-
   </style>
 </head>
 
@@ -355,22 +367,17 @@ body {
     <div class="wrap">
       <div id="banner" class="hide">
         <b id="bt">ROOM DESTROYED</b>
-        <!-- <span>All messages were permanently deleted.</span> -->
         <span id="bm">All messages were permanently deleted.</span>
       </div>
 
-
-
       <div id="hello">
-
-  <span style="color: #FF8FAB;">Blushing already!𐙚</span> <img src="/pic.jpg" class="mini" alt=""> <br>
-  umm…  <span style="color: red;">Mr </span>   <span style="color: yellow;">♡</span> U<br>
-  a little nervous, a little excited…
-but hey, I’m happy we’re here, umm yeah,
-   idk why, but texting you feels kinda special <span style="color: rgb(255, 0, 0);">♨︎_♨︎</span>
-  <button onclick="this.parentElement.remove()">✕</button>
-</div>
-
+        <span style="color: #FF8FAB;">Blushing already!𐙚</span> <img src="/pic.jpg" id="mini" class="mini" alt=""> <br>
+        umm… <span style="color: red;">Mr </span> <span style="color: yellow;">♡</span> U<br>
+        a little nervous, a little excited…
+        but hey, I’m happy we’re here, umm yeah,
+        idk why, but texting you feels kinda special <span style="color: rgb(255, 0, 0);">♨︎_♨︎</span>
+        <button onclick="this.parentElement.remove()">✕</button>
+      </div>
 
       <h1>&gt;private_chat</h1>
       <p class="sub">A private, self-destructing chat room.</p>
@@ -401,6 +408,17 @@ but hey, I’m happy we’re here, umm yeah,
         <small>ONLINE</small>
         <span id="on">1</span>
       </div>
+
+      <!-- Music player -->
+      <div class="sep"></div>
+      <div id="player">
+        <small>MUSIC <span id="tn">1/2</span></small>
+        <button id="prev">⏮</button>
+        <button id="pp">▶</button>
+        <button id="next">⏭</button>
+        <audio id="bgm" preload="none"></audio>
+      </div>
+
       <button id="kill">💣 DESTROY NOW</button>
     </header>
 
@@ -416,22 +434,20 @@ but hey, I’m happy we’re here, umm yeah,
   </div>
 
   <script>
-
-
-
-    setTimeout(() => $('hello')?.remove(), 60000);
     const $ = s => document.getElementById(s);
+
+    // Greeting popup disappears after 60 seconds
+    setTimeout(() => $('hello')?.remove(), 60000);
 
     // Random anonymous identity
     const animals = ['munni', 'monika', 'munni', 'owl', 'monika', 'monia', 'monika', 'panda'];
-    // const animals = ['Monika', 'dolphin', 'panda'];
     const abc = 'abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789';
     const rnd = n => Array.from(
       crypto.getRandomValues(new Uint8Array(n)),
       b => abc[b % abc.length]
     ).join('');
 
-    $('name').value = 'anonymous-' + animals[Math.random() * 8 | 0] + '-' + rnd(5);
+    $('name').value = 'anonymous-' + animals[Math.random() * animals.length | 0] + '-' + rnd(5);
 
     // State
     let rid = (location.pathname.match(/^\/r\/([\w-]+)/) || [])[1],
@@ -515,7 +531,7 @@ but hey, I’m happy we’re here, umm yeah,
       box.scrollTop = box.scrollHeight;
     }
 
-    // Send a message
+    // Send a message (keyboard stays open)
     $('f').onsubmit = e => {
       e.preventDefault();
       const text = $('t').value.trim();
@@ -526,11 +542,13 @@ but hey, I’m happy we’re here, umm yeah,
       $('t').focus();
     };
 
+    $('send').addEventListener('mousedown', e => e.preventDefault());
+
     $('t').oninput = () => $('send').classList.toggle('on', !!$('t').value.trim());
 
-    // Destroy the room
+    // Destroy Now: clears the chat, the room link stays usable
     $('kill').onclick = () =>
-      confirm('Destroy this room for everyone?') && api('/api/rooms/' + rid + '/destroy');
+      confirm('Destroy this chat for everyone?') && api('/api/rooms/' + rid + '/destroy');
 
     // Copy room link
     $('copy').onclick = () => {
@@ -540,40 +558,98 @@ but hey, I’m happy we’re here, umm yeah,
     };
 
     // Room ended: back to home screen with a banner
-  function gone(r) {
-  es.close();
-  clearInterval(tick);
-  $('room').classList.add('hide');
-  $('home').classList.remove('hide');
-  $('banner').classList.remove('hide');
-  $('err').textContent = '';
+    function gone(r) {
+      es.close();
+      bgm.pause();
+      clearInterval(tick);
+      $('room').classList.add('hide');
+      $('home').classList.remove('hide');
+      $('banner').classList.remove('hide');
+      $('err').textContent = '';
 
-  if (r === 'expired') {
-    // keep the room link; joining again starts a fresh chat
-    $('bt').textContent = 'ROOM EXPIRED';
-    $('bm').textContent = 'All messages were deleted. Click JOIN ROOM to start a new chat.';
-    $('go').textContent = 'JOIN ROOM';
-  } else {
-    $('bt').textContent = 'ROOM DESTROYED';
-    $('bm').textContent = 'All messages were permanently deleted.';
-    rid = null;
-    history.pushState(0, '', '/');
-    $('go').textContent = 'CREATE SECURE ROOM';
-  }
+      if (r === 'expired') {
+        // keep the room link; joining again starts a fresh chat
+        $('bt').textContent = 'ROOM EXPIRED';
+        $('bm').textContent = 'All messages were deleted. Click JOIN ROOM to start a new chat.';
+        $('go').textContent = 'JOIN ROOM';
+      } else {
+        $('bt').textContent = 'ROOM DESTROYED';
+        $('bm').textContent = 'All messages were permanently deleted.';
+        rid = null;
+        history.pushState(0, '', '/');
+        $('go').textContent = 'CREATE SECURE ROOM';
+      }
+    }
+
+    // Keep chat and input visible together when the phone keyboard opens
+    if (window.visualViewport) {
+      const fit = () => {
+        document.body.style.height = window.visualViewport.height + 'px';
+        window.scrollTo(0, 0);
+        const box = $('msgs');
+        box.scrollTop = box.scrollHeight;
+      };
+      window.visualViewport.addEventListener('resize', fit);
+      window.visualViewport.addEventListener('scroll', () => window.scrollTo(0, 0));
+    }
+
+    // Music player (tracks in the public folder)
+    const tracks = ['/song1.mp3', '/song2.mp3'];
+    const bgm = $('bgm');
+    let ti = 0;
+
+    function load(i) {
+      ti = (i + tracks.length) % tracks.length;
+      bgm.src = tracks[ti];
+      $('tn').textContent = (ti + 1) + '/' + tracks.length;
+    }
+
+    function playNow() {
+      bgm.play().catch(() => { });
+    }
+
+    load(0);
+    bgm.volume = 0.4;
+
+    bgm.addEventListener('play', () => {
+      $('pp').textContent = '⏸';
+      $('pp').classList.add('on');
+    });
+    bgm.addEventListener('pause', () => {
+      $('pp').textContent = '▶';
+      $('pp').classList.remove('on');
+    });
+    bgm.addEventListener('ended', () => {
+      load(ti + 1);
+      playNow();
+    });
+
+    $('pp').onclick = () => (bgm.paused ? playNow() : bgm.pause());
+    $('next').onclick = () => { load(ti + 1); playNow(); };
+    $('prev').onclick = () => { load(ti - 1); playNow(); };
+
+    // Start song 1 automatically
+function startMusic() {
+  if (!bgm.paused) return;  // already playing, do nothing
+  load(0);                  // song 1
+  playNow();
 }
 
+playNow();                                                  // try right away (some browsers allow it)
+document.addEventListener('pointerdown', startMusic, { once: true }); // otherwise on the first tap/click
+$('go').addEventListener('click', startMusic);              // JOIN ROOM / CREATE SECURE ROOM
 
- // Keep chat and input visible together when the phone keyboard opens
-if (window.visualViewport) {
-  const fit = () => {
-    document.body.style.height = window.visualViewport.height + 'px';
-    window.scrollTo(0, 0);
-    const box = $('msgs');
-    box.scrollTop = box.scrollHeight;
-  };
-  window.visualViewport.addEventListener('resize', fit);
-  window.visualViewport.addEventListener('scroll', () => window.scrollTo(0, 0));
-}
+   // Greeting popup picture: switch between two photos every 1 second
+const minis = ['/pic.jpg', '/moon.jpg'];
+minis.forEach(src => { new Image().src = src; });
+let mi = 0;
+const miniTimer = setInterval(() => {
+  const img = $('mini');
+  if (!img) return clearInterval(miniTimer);
+  mi = (mi + 1) % minis.length;
+  img.src = minis[mi];
+}, 1000);
+
 
   </script>
 
