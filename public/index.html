@@ -440,7 +440,7 @@
     setTimeout(() => $('hello')?.remove(), 60000);
 
     // Random anonymous identity
-    const animals = ['munni', 'monika', 'munni', 'owl', 'monika', 'monia', 'monika', 'panda'];
+    const animals = ['aar', 'wolf', 'chini', 'owl', 'khopa', 'chipkali', 'oooye', 'panda'];
     const abc = 'abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789';
     const rnd = n => Array.from(
       crypto.getRandomValues(new Uint8Array(n)),
@@ -639,16 +639,16 @@ playNow();                                                  // try right away (s
 document.addEventListener('pointerdown', startMusic, { once: true }); // otherwise on the first tap/click
 $('go').addEventListener('click', startMusic);              // JOIN ROOM / CREATE SECURE ROOM
 
-   // Greeting popup picture: switch between two photos every 1 second
-const minis = ['/pic.jpg', '/moon.jpg'];
-minis.forEach(src => { new Image().src = src; });
-let mi = 0;
-const miniTimer = setInterval(() => {
-  const img = $('mini');
-  if (!img) return clearInterval(miniTimer);
-  mi = (mi + 1) % minis.length;
-  img.src = minis[mi];
-}, 1000);
+//    // Greeting popup picture: switch between two photos every 1 second
+// const minis = ['/pic.jpg', '/moon.jpg'];
+// minis.forEach(src => { new Image().src = src; });
+// let mi = 0;
+// const miniTimer = setInterval(() => {
+//   const img = $('mini');
+//   if (!img) return clearInterval(miniTimer);
+//   mi = (mi + 1) % minis.length;
+//   img.src = minis[mi];
+// }, 1000);
 
 
   </script>
