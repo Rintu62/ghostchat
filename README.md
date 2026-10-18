@@ -4,7 +4,6 @@ Self-destructing real-time chat rooms. Zero dependencies (Node 18+).
 ## Run locally
     npm start        # then open http://localhost:3000
 
-<img width="2862" height="1516" alt="image" src="https://github.com/user-attachments/assets/425c37b0-58b5-4a90-85ee-82772afee1f8" />
 
     
 Set `ROOM_TTL_MIN` to change room lifetime (default 10 minutes).
