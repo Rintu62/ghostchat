@@ -20,3 +20,5 @@ Set `ROOM_TTL_MIN` to change room lifetime (default 10 minutes).
 4. Deploy. Every push auto-deploys.
 
 Rooms live in server memory and vanish on expiry, destroy, or restart.
+
+This is safe palceCHIT-CHAT web application
